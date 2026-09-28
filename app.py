@@ -18,7 +18,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse, parse_qs
 
 from config import PORT
-from db import init_db
+from db import init_db, sb_patch, sb_get, sb_post
 
 # Pages
 from pages.dashboard import dashboard
@@ -201,6 +201,23 @@ class Handler(BaseHTTPRequestHandler):
             if m:
                 msg, is_err = handle_product_delete(int(m.group(1)))
                 return self.send_html(products_page(msg, is_err))
+
+            # ── Update a dashboard manual setting ──
+            if path == "/dashboard/settings":
+                key   = form.get("key",   [""])[0].strip()
+                value = form.get("value", ["0"])[0].strip()
+                allowed = {"opening_stock", "received_amount"}
+                if key in allowed:
+                    try:
+                        float(value)   # validate it is numeric
+                        existing = sb_get("settings", {"key": f"eq.{key}"})
+                        if existing:
+                            sb_patch("settings", {"key": f"eq.{key}"}, {"value": value})
+                        else:
+                            sb_post("settings", {"key": key, "value": value})
+                    except Exception:
+                        pass  # silently skip bad input
+                return self.send_redirect("/")
 
             self.send_error_page("Route not found.", 404)
 

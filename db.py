@@ -79,6 +79,12 @@ def init_db() -> None:
     if not sb_get("settings", {"key": "eq.next_invoice_no"}):
         sb_post("settings", {"key": "next_invoice_no", "value": "1"})
 
+    # Manual KPI settings — created only once if missing
+    if not sb_get("settings", {"key": "eq.opening_stock"}):
+        sb_post("settings", {"key": "opening_stock", "value": "0"})
+    if not sb_get("settings", {"key": "eq.received_amount"}):
+        sb_post("settings", {"key": "received_amount", "value": "0"})
+
     if not sb_get("products", {"select": "id", "limit": "1"}):
         try:
             with open(PRODUCTS_JSON, encoding="utf-8") as f:

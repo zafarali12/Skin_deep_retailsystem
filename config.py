@@ -64,3 +64,80 @@ SUPPLIER: dict[str, str] = {
 # ── Invoice Types ─────────────────────────────────────────────────────────────
 INVOICE_TYPES = ["General Invoice", "GST Invoice"]
 GST_RATE      = 0.18
+
+
+# Retailer Legal/Billing Name (shown on Excel as Buyer Name)
+# App mein Alfatah naam use hoga, Excel invoice pe ZUBAIDA ASSOCIATES aayega.
+RETAILER_BUYER_NAMES = {
+    "Alfatah": "M/S. ZUBAIDA ASSOCIATES",
+}
+
+
+def get_buyer_name(retailer):
+    return RETAILER_BUYER_NAMES.get(retailer, retailer)
+
+
+# Per-retailer billing details for GST invoices (NTN, STRN, address)
+RETAILER_INFO = {
+    "Jalalsons": {
+        "buyer_name": "M/S. Jalal Sons",
+        "ntn": "1010737-1",
+        "strn": "0300999995646",
+        "address": "12-E Main Market Gulberg, Lahore",
+        "discount_label": None,
+    },
+    "Alfatah": {
+        "buyer_name": "M/S. ZUBAIDA ASSOCIATES",
+        "ntn": "4269497-3",
+        "strn": "0300426949714",
+        "address": "House # 51-B, Mehmood Ali Kassuri Road, Hussain Chowk, Lahore",
+        "discount_label": None,
+    },
+    "Naheed": {
+        "buyer_name": "NAHEED SUPER MARKET",
+        "ntn": "1328857-1",
+        "strn": "1700132885719",
+        "address": "156-157, Main Shaeed-E-Millat Road, Block 3, BYJCHS",
+        "discount_label": "Store Discount",
+    },
+    "Shams": {
+        "buyer_name": "SHAMS SHOPPING CENTER (SMC PVT) LTD",
+        "ntn": "8074177-7",
+        "strn": "8074177-7",
+        "address": "Office no. 16, Block-8, 1st Floor Shoukat Complex, Super",
+        "discount_label": None,
+    },
+    "Carrefour": {
+        "buyer_name": "MAF Hypermarkets Pakistan (Private) Limited",
+        "ntn": "3000691-7",
+        "strn": "03-03-9999-110-55",
+        "address": "MAF Hypermarkets Pakistan (Pvt) Ltd.",
+        "discount_label": None,
+    },
+    "Highfy": {
+        "buyer_name": "Highfy",
+        "ntn": "",
+        "strn": "",
+        "address": "",
+        "discount_label": None,
+    },
+    "Dolmen Cart": {
+        "buyer_name": "Dolmen Cart",
+        "ntn": "",
+        "strn": "",
+        "address": "",
+        "discount_label": None,
+    },
+}
+
+
+def get_retailer_info(retailer):
+    info = RETAILER_INFO.get(retailer, {})
+    buyer = get_buyer_name(retailer)
+    return {
+        "buyer_name": info.get("buyer_name", buyer),
+        "ntn": info.get("ntn", ""),
+        "strn": info.get("strn", ""),
+        "address": info.get("address", ""),
+        "discount_label": info.get("discount_label", None),
+    }
